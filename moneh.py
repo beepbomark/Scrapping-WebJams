@@ -51,29 +51,14 @@ if __name__ == '__main__':
                     else:
                         jam_joined = 0
 
-                    jam_data.append([jam_id, jam_link, jam_title, jam_joined])
+                    jam_data.append([jam_id, jam_link, jam_title, jam_joined, description.text.strip()])
                 elif (description is None):
                     print("Error reading description: {}".format(jam_link))
 
             index += 1
 
-            if jam_page_content:
-                jam_page_soup = BeautifulSoup(jam_page_content, 'html.parser')
-                description = jam_page_soup.find('div', class_='jam_content')
-
-                if description and re.search(r'\$', description.text):
-                    joined_count_element = jam_cell.find('span', class_='joined_count')
-                    if joined_count_element:
-                        count_text = joined_count_element.text.strip('()').split()[0]
-                        count_text_no_commas = count_text.replace(',', '')
-                        jam_joined = int(count_text_no_commas)
-                    else:
-                        jam_joined = 0
-
-                    jam_data.append([jam_id, jam_link, jam_title, jam_joined, description.text.strip()])
-
         df = pd.DataFrame(jam_data, columns=['Jam ID', 'Jam Link', 'Jam Title', 'Joined Count', 'Description'])
-        
+
         # Uncomment the next line to export the DataFrame to a CSV file
         df.to_csv('jam_data.csv', index=False)
 
