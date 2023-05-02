@@ -1,31 +1,3 @@
-# import requests
-# from bs4 import BeautifulSoup
-
-# def fetch_jams(url):
-#     try:
-#         response = requests.get(url)
-#         if response.status_code == 200:
-#             return response.text
-#     except requests.exceptions.RequestException as e:
-#         print("Error fetching URL:", e)
-
-#     return None
-
-# if __name__ == '__main__':
-#     url = "https://itch.io/jams"
-#     html_content = fetch_jams(url)
-    
-#     if html_content:
-#         soup = BeautifulSoup(html_content, 'html.parser')
-#         jam_cells = soup.find_all('div', class_='jam_cell')
-
-#         for jam_cell in jam_cells:
-#             print(jam_cell.prettify())
-#             print("-" * 50)  # Separator line
-#     else:
-#         print("No content found.")
-
-
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -39,6 +11,9 @@ def fetch_jams(url):
         print("Error fetching URL:", e)
 
     return None
+
+def find_dollar_sign(text):
+    return "$" in text
 
 if __name__ == '__main__':
     url = "https://itch.io/jams"
@@ -64,10 +39,29 @@ if __name__ == '__main__':
             else:
                 jam_joined = 0
 
-            jam_data.append([jam_id, jam_link, jam_title, jam_joined])
+            # Fetch the jam page content
+            jam_page_content = fetch_jams(jam_link)
+            dollar_sentences = []
 
-        df = pd.DataFrame(jam_data, columns=['Jam ID', 'Jam Link', 'Jam Title', 'Joined Count'])
-        df.to_csv('jam_data.csv', index=False)
+            if jam_page_content:
+                jam_page_soup = BeautifulSoup(jam_page_content, 'html.parser')
+                paragraphs = jam_page_soup.find_all('p')
+
+                for paragraph in paragraphs:
+                    if find_dollar_sign(paragraph.text):
+                        dollar_sentences.append(paragraph.text.strip())
+
+            if dollar_sentences:  # Only add jam data if dollar_sentences is not empty
+                jam_data.append({
+                    'Jam ID': jam_id,
+                    'Jam Link': jam_link,
+                    'Jam Title': jam_title,
+                    'Joined Count': jam_joined,
+                    'Dollar Sentences': ' | '.join(dollar_sentences)
+                })
+
+        df = pd.DataFrame(jam_data)
+        df.to_csv('jam_data_with_dollar_signs.csv', index=False)
 
         print(df)
     else:
