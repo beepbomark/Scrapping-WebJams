@@ -3,6 +3,9 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import re
 
+def find_dollar_sign(text):
+    return "$" in text
+
 def fetch_html(url):
     try:
         response = requests.get(url)
@@ -33,7 +36,7 @@ if __name__ == '__main__':
             jam_content = fetch_html(jam_link)
             jam_title = jam_link_element.text.strip()
 
-            if re.search(r'This jam is now over. It ran from ', jam_content):
+            if 'This jam is now over. It ran from ' in jam_content:
                 print('{} ended'.format(jam_title))
                 index += 1
                 continue
@@ -41,8 +44,10 @@ if __name__ == '__main__':
             if jam_content:
                 soup1 = BeautifulSoup(jam_content, 'html.parser')
                 description = soup1.find('div', class_='jam_content')
+
                 # check if description string has '$' char
                 if description and re.search(r'\$', description.text):
+                    #print(jam_title)
                     joined_count_element = jam_cell.find('span', class_='joined_count')
                     if joined_count_element:
                         count_text = joined_count_element.text.strip('()').split()[0]
@@ -51,13 +56,30 @@ if __name__ == '__main__':
                     else:
                         jam_joined = 0
 
-                    jam_data.append([jam_id, jam_link, jam_title, jam_joined, description.text.strip()])
+                    dollar_sentences = []
+                    texts = description.find_all(string=True)
+                    for text in texts:
+                        if find_dollar_sign(text):
+                            sentence = re.sub(r'\s+(?<! )', '', text.text)
+                            dollar_sentences.append(sentence.strip())
+
+                    if dollar_sentences:  # Only add jam data if dollar_sentences is not empty
+                        jam_data.append({
+                            'Jam ID': jam_id,
+                            'Jam Link': jam_link,
+                            'Jam Title': jam_title,
+                            'Joined Count': jam_joined,
+                            'Dollar Sentences': ' | '.join(dollar_sentences)
+                        })
+                    else:
+                        print(jam_link)
+
                 elif (description is None):
                     print("Error reading description: {}".format(jam_link))
 
             index += 1
 
-        df = pd.DataFrame(jam_data, columns=['Jam ID', 'Jam Link', 'Jam Title', 'Joined Count', 'Description'])
+        df = pd.DataFrame(jam_data, columns=['Jam ID', 'Jam Link', 'Jam Title', 'Joined Count', 'Dollar Sentences'])
 
         # Uncomment the next line to export the DataFrame to a CSV file
         df.to_csv('jam_data.csv', index=False)
