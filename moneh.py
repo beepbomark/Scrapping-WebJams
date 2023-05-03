@@ -1,54 +1,66 @@
-import requests
-from bs4 import BeautifulSoup
-import pandas as pd
-import re
+# Import necessary libraries
+import requests                                                                 # Import the `requests` library to make HTTP requests to web pages.
+from bs4 import BeautifulSoup                                                   # Import `BeautifulSoup` from the `bs4` library to parse HTML content.
+import pandas as pd                                                             # Import the `pandas` library and use the alias `pd` to work with data in a DataFrame format.
+import re                                                                       # Import the `re` library to work with regular expressions.
 
+# Define a helper function to check if a dollar sign is present in the given text
 def find_dollar_sign(text):
-    return "$" in text
+    return "$" in text                                                          # Check if the dollar sign is in the given text and return the result as a boolean.
 
+# Define a helper function to fetch the HTML content of a given URL
 def fetch_html(url):
+    # Attempt to fetch the content of the given URL.
     try:
         response = requests.get(url)
+        # If successful, return the text content of the response
         if response.status_code == 200:
             return response.text
     except requests.exceptions.RequestException as e:
+        # If there's an error, print it and return `None`
         print("Error fetching URL:", e)
-
     return None
 
+# Start the main script
 if __name__ == '__main__':
-    url = "https://itch.io/jams"
-    html_content = fetch_html(url)
+    url = "https://itch.io/jams"                                                # Define the URL of the GameJams listing page.
+    html_content = fetch_html(url)                                              # Fetch the content of the listing page.
 
     if html_content:
-        soup = BeautifulSoup(html_content, 'html.parser')
-        jam_cells = soup.find_all('div', class_="jam_cell")
+        soup = BeautifulSoup(html_content, 'html.parser')                       # Parse the fetched HTML content using BeautifulSoup.
+        jam_cells = soup.find_all('div', class_="jam_cell")                     # Find all GameJam cells in the parsed HTML.
 
-        jam_data = []
-        index = 1
+        jam_data = []                                                           # Create an empty list to store GameJam data.
+        index = 1                                                               # To keep track of the current GameJam number.
 
         for jam_cell in jam_cells:
-            print("{}/{}".format(index, len(jam_cells)), end="\r")
+            # Print the current progress to the terminal.
+            print("{}/{}".format(index, len(jam_cells)), end="\r")              
 
-            jam_id = jam_cell.get('data-jam_id')
-            jam_link_element = jam_cell.find('a')
-            jam_link = 'https://itch.io' + jam_link_element.get('href')
-            jam_content = fetch_html(jam_link)
-            jam_title = jam_link_element.text.strip()
+            # Get the GameJam ID, link, and title from the current GameJam cell.
+            jam_id = jam_cell.get('data-jam_id')                                
+            jam_link_element = jam_cell.find('a')                               
+            jam_link = 'https://itch.io' + jam_link_element.get('href')         
+            jam_content = fetch_html(jam_link)                                  
+            jam_title = jam_link_element.text.strip()                      
 
+            # Check if the GameJam has ended; if so, skip it.
             if 'This jam is now over. It ran from ' in jam_content:
-                print('{} ended'.format(jam_title))
+                print('{} ended'.format(jam_title))                             
                 index += 1
                 continue
 
+            # Fetch and parse the content of the GameJam detail page.
             if jam_content:
                 soup1 = BeautifulSoup(jam_content, 'html.parser')
                 description = soup1.find('div', class_='jam_content')
 
-                # check if description string has '$' char
+                # Check if the description contains a dollar sign; if so, process it.
                 if description and re.search(r'\$', description.text):
                     #print(jam_title)
                     joined_count_element = jam_cell.find('span', class_='joined_count')
+
+                    # Get the number of participants and clean it up.
                     if joined_count_element:
                         count_text = joined_count_element.text.strip('()').split()[0]
                         count_text_no_commas = count_text.replace(',', '')
@@ -56,6 +68,7 @@ if __name__ == '__main__':
                     else:
                         jam_joined = 0
 
+                    # Find all sentences containing a dollar sign.
                     dollar_sentences = []
                     texts = description.find_all(string=True)
                     for text in texts:
@@ -63,7 +76,8 @@ if __name__ == '__main__':
                             sentence = re.sub(r'\s+(?<! )', '', text.text)
                             dollar_sentences.append(sentence.strip())
 
-                    if dollar_sentences:  # Only add jam data if dollar_sentences is not empty
+                    # Only add jam data if dollar_sentences is not empty
+                    if dollar_sentences:  
                         jam_data.append({
                             'Jam ID': jam_id,
                             'Jam Link': jam_link,
@@ -73,12 +87,12 @@ if __name__ == '__main__':
                         })
                     else:
                         print(jam_link)
-
+                # If the description is None, print an error message.
                 elif (description is None):
                     print("Error reading description: {}".format(jam_link))
-
+            # Increment the index for the next GameJam.
             index += 1
-
+        # Create a DataFrame from the collected GameJam data.
         df = pd.DataFrame(jam_data, columns=['Jam ID', 'Jam Link', 'Jam Title', 'Joined Count', 'Dollar Sentences'])
 
         # Uncomment the next line to export the DataFrame to a CSV file
