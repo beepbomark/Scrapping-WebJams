@@ -25,7 +25,7 @@ if __name__ == '__main__':
         jam_cells = soup.find_all('div', class_="jam_cell")
 
         jam_data = []
-        index = 1;
+        index = 1
 
         for jam_cell in jam_cells:
             print("{}/{}".format(index, len(jam_cells)), end="\r")
@@ -84,6 +84,6 @@ if __name__ == '__main__':
         # Uncomment the next line to export the DataFrame to a CSV file
         df.to_csv('jam_data.csv', index=False)
 
-        print(df)
+        #print(df)
     else:
         print("No content found.")
