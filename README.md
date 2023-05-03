@@ -29,3 +29,18 @@ The resulting DataFrame and CSV file will contain the following columns:
 The script will fetch the list of GameJams from itch.io and filter out the ones with prize money in their description. It will print the result in the terminal and export the list to a CSV file named **`jam_data.csv`** in the same directory.
 
 Now you have an automated solution to find GameJams with prize money on itch.io, making it easier to decide which ones to participate in. Happy gaming!
+
+## Code Explanation
+
+The script follows these steps:
+
+1. Define helper functions, such as `fetch_html` to fetch the content of a URL, and `find_dollar_sign` to check if a text contains a dollar sign.
+2. Fetch the main GameJams listing page from itch.io using the `fetch_html` function.
+3. Parse the fetched HTML content using BeautifulSoup to find and loop through all the individual GameJam cells.
+4. For each GameJam, fetch the corresponding detail page to check its description.
+5. Use the `find_dollar_sign` function and regular expressions to filter out GameJams with prize money mentioned in their description.
+6. Collect the filtered GameJams' details, such as ID, link, title, joined count, and dollar sentences.
+7. Create a DataFrame using pandas to store and display the collected data.
+8. Optionally, export the DataFrame to a CSV file for further use.
+
+Throughout the script, progress updates are printed in the terminal to keep track of the current GameJam being processed.
