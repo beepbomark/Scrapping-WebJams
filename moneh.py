@@ -31,7 +31,6 @@ def write_to_sheet(df):
         row = df.iloc[i].tolist()
         index = i+1
         sheet.insert_row(row, index)
-        time.sleep(1)
 
 # Define a helper function to check if a dollar sign is present in the given text
 def find_dollar_sign(text):
