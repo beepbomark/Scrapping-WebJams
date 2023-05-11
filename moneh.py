@@ -23,8 +23,8 @@ def write_to_sheet(df):
     # Clear existing content
     sheet.clear()
     
-    # Convert all data in DataFrame to string
-    df = df.astype(str)
+    # Convert DataFrame to JSON and back to ensure all types are JSON serializable
+    df = pd.read_json(df.to_json())
 
     # Write DataFrame to Google Sheet
     for i in range(len(df)):
