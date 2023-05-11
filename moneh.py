@@ -3,6 +3,27 @@ import requests                                                                 
 from bs4 import BeautifulSoup                                                   # Import `BeautifulSoup` from the `bs4` library to parse HTML content.
 import pandas as pd                                                             # Import the `pandas` library and use the alias `pd` to work with data in a DataFrame format.
 import re                                                                       # Import the `re` library to work with regular expressions.
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+
+def write_to_sheet(df):
+    # use creds to create a client to interact with the Google Drive API
+    scope = ['https://spreadsheets.google.com/feeds',
+             'https://www.googleapis.com/auth/drive']
+    creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
+    client = gspread.authorize(creds)
+
+    # Find a workbook by name and open the first sheet
+    sheet = client.open("Your_Google_Sheet_Name").sheet1
+
+    # Clear existing content
+    sheet.clear()
+
+    # Write DataFrame to Google Sheet
+    for i in range(len(df)):
+        row = df.iloc[i].tolist()
+        index = i+1
+        sheet.insert_row(row, index)
 
 # Define a helper function to check if a dollar sign is present in the given text
 def find_dollar_sign(text):
@@ -101,3 +122,4 @@ if __name__ == '__main__':
         #print(df)
     else:
         print("No content found.")
+write_to_sheet(df)
