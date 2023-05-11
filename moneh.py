@@ -23,10 +23,8 @@ def write_to_sheet(df):
     # Clear existing content
     sheet.clear()
     
-    # Convert all int64 values to native Python int
-    for col in df.columns:
-        if df[col].dtype == 'int64':
-            df[col] = df[col].astype(int)
+    # Convert DataFrame to JSON and back to ensure all types are JSON serializable
+    df = pd.read_json(df.to_json())
 
     # Write DataFrame to Google Sheet
     for i in range(len(df)):
