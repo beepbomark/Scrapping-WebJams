@@ -23,6 +23,9 @@ def write_to_sheet(df):
     
     # Convert entire dataframe to string format
     df = df.astype(str)
+    
+    # Introduce a delay of 1 second
+    time.sleep(1)
 
     # Upload DataFrame to Google Sheet
     wks_name = 'Sheet1'
