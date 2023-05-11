@@ -25,7 +25,7 @@ def write_to_sheet(df):
     df = df.astype(str)
     
     # Introduce a delay of 1 second
-    time.sleep(1)
+    time.sleep(10)
 
     # Upload DataFrame to Google Sheet
     wks_name = 'Sheet1'
