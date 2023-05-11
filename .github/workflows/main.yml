@@ -3,7 +3,7 @@ name: Update Google Sheet
 on:
   schedule:
     # Run at 23:59 UTC every day
-    - cron: '*/5 * * * *'
+    - cron: '0 * * * *'
 
 jobs:
   update-google-sheet:
