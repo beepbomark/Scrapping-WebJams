@@ -13,6 +13,9 @@ def write_to_sheet(df):
     scope = ['https://spreadsheets.google.com/feeds',
              'https://www.googleapis.com/auth/drive']
     creds_json = json.loads(os.getenv('GOOGLE_CREDS'))
+     # Write the credentials to a file
+    with open('client_secret.json', 'w') as f:
+        json.dump(creds_json, f)
     creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
     client = gspread.authorize(creds)
 
