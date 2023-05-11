@@ -12,13 +12,11 @@ def write_to_sheet(df):
     # use creds to create a client to interact with the Google Drive API
     scope = ['https://spreadsheets.google.com/feeds',
              'https://www.googleapis.com/auth/drive']
+    # Load the credentials from the GOOGLE_CREDS environment variable
     creds_json = json.loads(os.getenv('GOOGLE_CREDS'))
-     # Write the credentials to a file
-    with open('client_secret.json', 'w') as f:
-        json.dump(creds_json, f)
-    creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
-    client = gspread.authorize(creds)
-
+    
+    client = gspread.service_account_from_dict(creds_json, scope)
+    
     # Find a workbook by name and open the first sheet
     sheet = client.open("Game Jam Web Scrapping").sheet1
 
