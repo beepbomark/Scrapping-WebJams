@@ -3,34 +3,6 @@ import requests                                                                 
 from bs4 import BeautifulSoup                                                   # Import `BeautifulSoup` from the `bs4` library to parse HTML content.
 import pandas as pd                                                             # Import the `pandas` library and use the alias `pd` to work with data in a DataFrame format.
 import re                                                                       # Import the `re` library to work with regular expressions.
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
-import os
-import json
-
-def write_to_sheet(df):
-    # use creds to create a client to interact with the Google Drive API
-    scope = ['https://spreadsheets.google.com/feeds',
-             'https://www.googleapis.com/auth/drive']
-    # Load the credentials from the GOOGLE_CREDS environment variable
-    creds_json = json.loads(os.getenv('GOOGLE_CREDS'))
-    
-    client = gspread.service_account_from_dict(creds_json, scope)
-    
-    # Find a workbook by name and open the first sheet
-    sheet = client.open("Game Jam Web Scrapping").sheet1
-
-    # Clear existing content
-    sheet.clear()
-    
-    # Convert DataFrame to JSON and back to ensure all types are JSON serializable
-    df = pd.read_json(df.to_json())
-
-    # Write DataFrame to Google Sheet
-    for i in range(len(df)):
-        row = df.iloc[i].tolist()
-        index = i+1
-        sheet.insert_row(row, index)
 
 # Define a helper function to check if a dollar sign is present in the given text
 def find_dollar_sign(text):
@@ -71,13 +43,13 @@ if __name__ == '__main__':
             jam_link = 'https://itch.io' + jam_link_element.get('href')         
             jam_content = fetch_html(jam_link)                                  
             jam_title = jam_link_element.text.strip()                      
-            """
+
             # Check if the GameJam has ended; if so, skip it.
             if 'This jam is now over. It ran from ' in jam_content:
                 print('{} ended'.format(jam_title))                             
                 index += 1
                 continue
-            """
+
             # Fetch and parse the content of the GameJam detail page.
             if jam_content:
                 soup1 = BeautifulSoup(jam_content, 'html.parser')
@@ -125,9 +97,6 @@ if __name__ == '__main__':
 
         # Uncomment the next line to export the DataFrame to a CSV file
         df.to_csv('jam_data.csv', index=False)
-        
-        # Write the DataFrame to Google Sheet
-        write_to_sheet(df)
 
         #print(df)
     else:
