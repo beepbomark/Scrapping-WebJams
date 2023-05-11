@@ -25,7 +25,7 @@ def write_to_sheet(df):
     df = df.astype(str)
     
     # Introduce a delay of 1 second
-    time.sleep(20)
+    time.sleep(30)
 
     # Upload DataFrame to Google Sheet
     wks_name = 'Sheet1'
@@ -62,7 +62,7 @@ if __name__ == '__main__':
 
         for jam_cell in jam_cells:
             # Print the current progress to the terminal.
-            print("{}/{}".format(index, len(jam_cells)), end="\r")              
+            # print("{}/{}".format(index, len(jam_cells)), end="\r")              
 
             # Get the GameJam ID, link, and title from the current GameJam cell.
             jam_id = jam_cell.get('data-jam_id')                                
