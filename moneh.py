@@ -7,6 +7,7 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import os
 import json
+from df2gspread import df2gspread as d2g
 
 def write_to_sheet(df):
     # use creds to create a client to interact with the Google Drive API
@@ -18,23 +19,14 @@ def write_to_sheet(df):
     client = gspread.service_account_from_dict(creds_json, scope)
     
     # Find a workbook by name and open the first sheet
-    sheet = client.open("Game Jam Web Scrapping").sheet1
-
-    # Clear existing content
-    sheet.clear()
+    spreadsheet = client.open("Game Jam Web Scrapping")
     
-    # Convert all data in DataFrame to string
+    # Convert entire dataframe to string format
     df = df.astype(str)
-    
-    # Convert DataFrame to JSON and back to ensure all types are JSON serializable
-    df = pd.read_json(df.to_json())
 
-    # Write DataFrame to Google Sheet
-    for i in range(len(df)):
-        row = df.iloc[i].tolist()
-        index = i+1
-        sheet.insert_row(row, index)
-        time.sleep(1)
+    # Upload DataFrame to Google Sheet
+    wks_name = 'Sheet1'
+    d2g.upload(df, spreadsheet.id, wks_name, credentials=client, row_names=True)
 
 # Define a helper function to check if a dollar sign is present in the given text
 def find_dollar_sign(text):
