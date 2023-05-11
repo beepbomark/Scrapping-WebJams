@@ -5,12 +5,14 @@ import pandas as pd                                                             
 import re                                                                       # Import the `re` library to work with regular expressions.
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+import os
+import json
 
 def write_to_sheet(df):
     # use creds to create a client to interact with the Google Drive API
     scope = ['https://spreadsheets.google.com/feeds',
              'https://www.googleapis.com/auth/drive']
-    creds_json = json.loads(os.getenv('GOOGLE_SHEETS_CREDS'))
+    creds_json = json.loads(os.getenv('GOOGLE_CREDS'))
     creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
     client = gspread.authorize(creds)
 
