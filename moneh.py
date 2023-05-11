@@ -23,13 +23,14 @@ def write_to_sheet(df):
     # Clear existing content
     sheet.clear()
     
+    # Convert all int64 values to native Python int
+    for col in df.columns:
+        if df[col].dtype == 'int64':
+            df[col] = df[col].astype(int)
+
     # Write DataFrame to Google Sheet
     for i in range(len(df)):
         row = df.iloc[i].tolist()
-        
-        # Convert each element in the row to the appropriate type
-        row = [int(x) if isinstance(x, np.int64) else x for x in row]
-
         index = i+1
         sheet.insert_row(row, index)
 
