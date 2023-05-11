@@ -22,6 +22,9 @@ def write_to_sheet(df):
 
     # Clear existing content
     sheet.clear()
+    
+    # Convert int64 to int or float
+    df = df.astype(int)
 
     # Write DataFrame to Google Sheet
     for i in range(len(df)):
