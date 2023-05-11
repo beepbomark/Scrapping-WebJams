@@ -10,11 +10,12 @@ def write_to_sheet(df):
     # use creds to create a client to interact with the Google Drive API
     scope = ['https://spreadsheets.google.com/feeds',
              'https://www.googleapis.com/auth/drive']
+    creds_json = json.loads(os.getenv('GOOGLE_SHEETS_CREDS'))
     creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
     client = gspread.authorize(creds)
 
     # Find a workbook by name and open the first sheet
-    sheet = client.open("Your_Google_Sheet_Name").sheet1
+    sheet = client.open("Game Jam Web Scrapping").sheet1
 
     # Clear existing content
     sheet.clear()
@@ -118,8 +119,10 @@ if __name__ == '__main__':
 
         # Uncomment the next line to export the DataFrame to a CSV file
         df.to_csv('jam_data.csv', index=False)
+        
+        # Write the DataFrame to Google Sheet
+        write_to_sheet(df)
 
         #print(df)
     else:
         print("No content found.")
-write_to_sheet(df)
