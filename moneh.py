@@ -10,6 +10,7 @@ import json
 from df2gspread import df2gspread as d2g
 import time
 from google.oauth2.service_account import Credentials
+from google.auth.transport.requests import AuthorizedSession
 
 def write_to_sheet(df):
     # use creds to create a client to interact with the Google Drive API
