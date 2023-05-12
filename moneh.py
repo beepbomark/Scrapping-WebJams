@@ -70,13 +70,13 @@ if __name__ == '__main__':
             jam_link = 'https://itch.io' + jam_link_element.get('href')         
             jam_content = fetch_html(jam_link)                                  
             jam_title = jam_link_element.text.strip()                      
-
+            """
             # Check if the GameJam has ended; if so, skip it.
             if 'This jam is now over. It ran from ' in jam_content:
                 print('{} ended'.format(jam_title))                             
                 index += 1
                 continue
-
+            """
             # Fetch and parse the content of the GameJam detail page.
             if jam_content:
                 soup1 = BeautifulSoup(jam_content, 'html.parser')
@@ -127,6 +127,7 @@ if __name__ == '__main__':
         
         # Write the DataFrame to Google Sheet
         write_to_sheet(df)
+
         #print(df)
     else:
         print("No content found.")
