@@ -124,7 +124,9 @@ if __name__ == '__main__':
 
         # Uncomment the next line to export the DataFrame to a CSV file
         df.to_csv('jam_data.csv', index=False)
-
+        
+        # Write the DataFrame to Google Sheet
+        write_to_sheet(df)
         #print(df)
     else:
         print("No content found.")
