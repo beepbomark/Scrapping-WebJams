@@ -36,8 +36,11 @@ def write_to_sheet(df):
     time.sleep(30)
 
     # Upload DataFrame to Google Sheet
-    wks_name = 'Sheet1'
-    d2g.upload(df, spreadsheet.id, wks_name, credentials=creds, row_names=True)
+    worksheet.insert_rows(df.values.tolist(), row=1)
+
+    # Add headers
+    headers = [str(i) for i in df.columns]
+    worksheet.insert_row(headers, index=1)
 
 # Define a helper function to check if a dollar sign is present in the given text
 def find_dollar_sign(text):
