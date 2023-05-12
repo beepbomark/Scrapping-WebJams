@@ -15,12 +15,13 @@ def write_to_sheet(df):
     # use creds to create a client to interact with the Google Drive API
     scope = ['https://spreadsheets.google.com/feeds',
              'https://www.googleapis.com/auth/drive']
+
     # Load the credentials from the GOOGLE_CREDS environment variable
     creds_json = json.loads(os.getenv('GOOGLE_CREDS'))
-    
-    # Create credentials object from service account infor and scopes
-    client = gspread.service_account_from_dict(creds_json, scope)
-    
+
+    # Create credentials object from service account info and scopes
+    creds = Credentials.from_service_account_info(creds_json, scopes=scope)
+
     client = gspread.Client(auth=creds)
     client.session = AuthorizedSession(creds)
     
@@ -35,7 +36,7 @@ def write_to_sheet(df):
 
     # Upload DataFrame to Google Sheet
     wks_name = 'Sheet1'
-    d2g.upload(df, spreadsheet.id, wks_name, credentials=client, row_names=True)
+    d2g.upload(df, spreadsheet.id, wks_name, credentials=creds, row_names=True)
 
 # Define a helper function to check if a dollar sign is present in the given text
 def find_dollar_sign(text):
