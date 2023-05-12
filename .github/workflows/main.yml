@@ -25,4 +25,4 @@ jobs:
       - name: Run script
         env:
           GOOGLE_CREDS: ${{ secrets.GOOGLE_CREDS }}
-        run: python your_script.py
+        run: python moneh.py
