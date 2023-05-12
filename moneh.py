@@ -9,6 +9,7 @@ import os
 import json
 from df2gspread import df2gspread as d2g
 import time
+from google.oauth2.service_account import Credentials
 
 def write_to_sheet(df):
     # use creds to create a client to interact with the Google Drive API
@@ -17,7 +18,11 @@ def write_to_sheet(df):
     # Load the credentials from the GOOGLE_CREDS environment variable
     creds_json = json.loads(os.getenv('GOOGLE_CREDS'))
     
+    # Create credentials object from service account infor and scopes
     client = gspread.service_account_from_dict(creds_json, scope)
+    
+    client = gspread.Client(auth=creds)
+    client.session = AuthorizedSession(creds)
     
     # Find a workbook by name and open the first sheet
     spreadsheet = client.open("Game Jam Web Scrapping")
