@@ -26,3 +26,5 @@ jobs:
         env:
           GOOGLE_CREDS: ${{ secrets.GOOGLE_CREDS }}
         run: python moneh.py
+          echo $GOOGLE_CREDS | base64 --decode > /home/runner/.oauth/drive.json
+          echo $GOOGLE_CREDS | base64 --decode > /home/runner/.gdrive_private
