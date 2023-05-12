@@ -28,12 +28,16 @@ def write_to_sheet(df):
     
     # Find a workbook by name and open the first sheet
     spreadsheet = client.open("Game Jam Web Scrapping")
+    worksheet = spreadsheet.get_worksheet(0)  # assuming that "Sheet1" is the first sheet
     
     # Convert entire dataframe to string format
     df = df.astype(str)
     
     # Introduce a delay of 1 second
     time.sleep(30)
+    
+    # Clear the existing contents of the sheet
+    worksheet.clear()
 
     # Upload DataFrame to Google Sheet
     worksheet.insert_rows(df.values.tolist(), row=1)
