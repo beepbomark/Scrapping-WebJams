@@ -3,6 +3,33 @@ import requests                                                                 
 from bs4 import BeautifulSoup                                                   # Import `BeautifulSoup` from the `bs4` library to parse HTML content.
 import pandas as pd                                                             # Import the `pandas` library and use the alias `pd` to work with data in a DataFrame format.
 import re                                                                       # Import the `re` library to work with regular expressions.
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+import os
+import json
+from df2gspread import df2gspread as d2g
+
+def write_to_sheet(df):
+    # use creds to create a client to interact with the Google Drive API
+    scope = ['https://spreadsheets.google.com/feeds',
+             'https://www.googleapis.com/auth/drive']
+    # Load the credentials from the GOOGLE_CREDS environment variable
+    creds_json = json.loads(os.getenv('GOOGLE_CREDS'))
+    
+    client = gspread.service_account_from_dict(creds_json, scope)
+    
+    # Find a workbook by name and open the first sheet
+    spreadsheet = client.open("Game Jam Web Scrapping")
+    
+    # Convert entire dataframe to string format
+    df = df.astype(str)
+    
+    # Introduce a delay of 1 second
+    time.sleep(30)
+
+    # Upload DataFrame to Google Sheet
+    wks_name = 'Sheet1'
+    d2g.upload(df, spreadsheet.id, wks_name, credentials=client, row_names=True)
 
 # Define a helper function to check if a dollar sign is present in the given text
 def find_dollar_sign(text):
@@ -35,7 +62,7 @@ if __name__ == '__main__':
 
         for jam_cell in jam_cells:
             # Print the current progress to the terminal.
-            print("{}/{}".format(index, len(jam_cells)), end="\r")              
+            # print("{}/{}".format(index, len(jam_cells)), end="\r")              
 
             # Get the GameJam ID, link, and title from the current GameJam cell.
             jam_id = jam_cell.get('data-jam_id')                                
