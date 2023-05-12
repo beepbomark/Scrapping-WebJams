@@ -8,6 +8,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 import os
 import json
 from df2gspread import df2gspread as d2g
+import time
 
 def write_to_sheet(df):
     # use creds to create a client to interact with the Google Drive API
