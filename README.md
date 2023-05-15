@@ -19,7 +19,6 @@ To run the script, you'll need the following Python libraries:
 
 ## Output
 The resulting DataFrame and CSV file will contain the following columns:
-
 * **`Jam ID`**: The unique identifier of the GameJam.
 * **`Jam Link`**: The URL to the GameJam page on itch.io.
 * **`Jam Title`**: The title of the GameJam.
@@ -27,13 +26,13 @@ The resulting DataFrame and CSV file will contain the following columns:
 * **`Dollar Sentences`**: The sentences from the description containing a dollar sign ($), indicating prize money.
 
 The script will fetch the list of GameJams from itch.io and filter out the ones with prize money in their description. It will print the result in the terminal and export the list to a CSV file named **`jam_data.csv`** in the same directory.
-
-Now you have an automated solution to find GameJams with prize money on itch.io, making it easier to decide which ones to participate in. Happy gaming!
+## Google Sheets Integration for Web Scraping
+In our project, we have integrated Google Sheets as a database to store and manage the data scraped from various game jam websites. We use the Google Sheets API to automate the process of updating the sheet with the latest data each time our web scraping script is run.
+The data scraped from the web is written into the Google Sheets document in a structured format, allowing for easy analysis and comparison of different game jams. This simplifies the process of monitoring and analyzing the data over time. 
+The link to the Google Sheets is: https://docs.google.com/spreadsheets/d/1P-bMkUd19Xajdj2bZAMkWNvzHvz96xwYFRrbl0QghEE/edit#gid=0
 
 ## Code Explanation
-
 The script follows these steps:
-
 1. Define helper functions, such as `fetch_html` to fetch the content of a URL, and `find_dollar_sign` to check if a text contains a dollar sign.
 2. Fetch the main GameJams listing page from itch.io using the `fetch_html` function.
 3. Parse the fetched HTML content using BeautifulSoup to find and loop through all the individual GameJam cells.
